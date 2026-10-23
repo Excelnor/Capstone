@@ -39,6 +39,7 @@
       project_directory=""
       project_type="Executable"
       target_reset_script="Reset();" />
+    <configuration Name="Debug" c_user_include_directories="../Lib" />
     <folder Name="CMSIS Files">
       <file file_name="STM32G0xx/Device/Include/stm32g0xx.h" />
       <file file_name="STM32G0xx/Device/Source/system_stm32g0xx.c">
@@ -55,7 +56,11 @@
     </folder>
     <folder Name="Source Files">
       <configuration Name="Common" filter="c;cpp;cxx;cc;h;s;asm;inc" />
+      <file file_name="../Lib/clocks.c" />
+      <file file_name="../Lib/gpio.c" />
+      <file file_name="../../CMPE2750-LibrariesAndDemosSimon/lib/i2c.c" />
       <file file_name="main.c" />
+      <file file_name="../Lib/timer.c" />
     </folder>
     <folder Name="System Files">
       <file file_name="SEGGER_THUMB_Startup.s" />

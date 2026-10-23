@@ -171,3 +171,36 @@ int _GPIO_SetPinAlternateFunction(GPIO_TypeDef * pPort, unsigned int PinNumber, 
   return 0;   // success
 
 }
+
+
+int _GPIO_Set_OutputType (GPIO_TypeDef * pPort, int PinNumber, _GPIO_OutputType otype)
+{
+  // only pins 0-15 inclusive are permitted
+  if (PinNumber > 15)
+    return -1;
+  
+  // set output state
+  if (otype == _GPIO_OutputType_PushPull)
+    pPort->OTYPER &= ~(1u << PinNumber);
+  
+  else
+  //if (otype == _GPIO_OutputType_OpenDrain)
+    pPort->OTYPER |= (1u << PinNumber);
+   
+  return 0;  
+}
+
+int _GPIO_Set_PullType (GPIO_TypeDef * pPort, int PinNumber, _GPIO_PullType ptype)
+{
+  // only pins 0-15 inclusive are permitted
+  if (PinNumber > 15)
+    return -1;
+
+  // clear bits first (puts pin in no-pull state)
+  pPort->PUPDR &= ~(0x3u << (2 * PinNumber));
+
+  // put back desired configuration
+  pPort->PUPDR |= ((unsigned int)ptype << (2 * PinNumber));
+
+  return 0;
+}
