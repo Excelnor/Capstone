@@ -18,9 +18,13 @@ Purpose : Generic application start
 #include "VL53L1X_api.h"
 #include "vl53l1_platform.h"
 
+
 //#define PartA
 //#define PartB
-#define PartC
+//#define PartC
+//#define PartD
+#define PartE
+
 
 
 /*********************************************************************
@@ -192,6 +196,149 @@ int main(void)
         __NOP();
     }
 }
+#endif
+
+#ifdef PartD
+// Variables for SEGGER Watch
+volatile unsigned int touchState = 0;
+volatile unsigned int previousState = 0;
+volatile unsigned int touchCount = 0;
+
+int main(void)
+{
+    _CLOCK_PLL_To_64();
+
+    // Configure PA6 as input for TTP223 OUT
+    _GPIO_SetPinMode(GPIOA, 6,
+                    _GPIO_PinMode_Input,
+                    _GPIO_Clock_On);
+
+    // Disable internal pull-up and pull-down
+    _GPIO_Set_PullType(GPIOA, 6, _GPIO_PullType_None);
+
+    while (1)
+    {
+        // Read PA6 
+        touchState = (_GPIO_GetPinIState(GPIOA, 6) != 0);
+
+        // Count each new touch
+        if (touchState == 1 && previousState == 0)
+        {
+            touchCount++;
+        }
+
+        // Save state for next iteration
+        previousState = touchState;
+    }
+}
+
+#endif
+
+#ifdef PartB
+
+#include "gpio.h"
+#include "CLOCK.h"
+
+volatile unsigned int ledTest = 0;
+
+int main(void)
+{
+    _CLOCK_PLL_To_64();
+
+    // Configure LED pins as outputs
+    _GPIO_SetPinMode(GPIOA, 7, _GPIO_PinMode_Output, _GPIO_Clock_On); // Red
+    _GPIO_SetPinMode(GPIOB, 0, _GPIO_PinMode_Output, _GPIO_Clock_On); // Green
+    _GPIO_SetPinMode(GPIOB, 1, _GPIO_PinMode_Output, _GPIO_Clock_On); // Yellow
+
+    // Initially turn OFF all LEDs
+    _GPIO_PinClear(GPIOA, 7);
+    _GPIO_PinClear(GPIOB, 0);
+    _GPIO_PinClear(GPIOB, 1);
+
+    while (1)
+    {
+        // LED control using SEGGER Watch
+        if (ledTest == 1)
+        {
+            _GPIO_PinSet(GPIOA, 7);   // Red ON
+            _GPIO_PinClear(GPIOB, 0);
+            _GPIO_PinClear(GPIOB, 1);
+        }
+        else if (ledTest == 2)
+        {
+            _GPIO_PinClear(GPIOA, 7);
+            _GPIO_PinSet(GPIOB, 0);   // Green ON
+            _GPIO_PinClear(GPIOB, 1);
+        }
+        else if (ledTest == 3)
+        {
+            _GPIO_PinClear(GPIOA, 7);
+            _GPIO_PinClear(GPIOB, 0);
+            _GPIO_PinSet(GPIOB, 1);   // Yellow ON
+        }
+        else
+        {
+            // All LEDs OFF
+            _GPIO_PinClear(GPIOA, 7);
+            _GPIO_PinClear(GPIOB, 0);
+            _GPIO_PinClear(GPIOB, 1);
+        }
+    }
+}
+
+#endif
+
+
+#ifdef PartE
+
+
+volatile unsigned int ledTest = 0;
+
+int main(void)
+{
+    _CLOCK_PLL_To_64();
+
+    // Configure LED pins as outputs
+    _GPIO_SetPinMode(GPIOA, 7, _GPIO_PinMode_Output, _GPIO_Clock_On); // Red
+    _GPIO_SetPinMode(GPIOB, 0, _GPIO_PinMode_Output, _GPIO_Clock_On); // Green
+    _GPIO_SetPinMode(GPIOB, 1, _GPIO_PinMode_Output, _GPIO_Clock_On); // Yellow
+
+    // Initially turn OFF all LEDs
+    _GPIO_PinClear(GPIOA, 7);
+    _GPIO_PinClear(GPIOB, 0);
+    _GPIO_PinClear(GPIOB, 1);
+
+    while (1)
+    {
+        // LED control using SEGGER Watch
+        if (ledTest == 1)
+        {
+            _GPIO_PinSet(GPIOA, 7);   // Red ON
+            _GPIO_PinClear(GPIOB, 0);
+            _GPIO_PinClear(GPIOB, 1);
+        }
+        else if (ledTest == 2)
+        {
+            _GPIO_PinClear(GPIOA, 7);
+            _GPIO_PinSet(GPIOB, 0);   // Green ON
+            _GPIO_PinClear(GPIOB, 1);
+        }
+        else if (ledTest == 3)
+        {
+            _GPIO_PinClear(GPIOA, 7);
+            _GPIO_PinClear(GPIOB, 0);
+            _GPIO_PinSet(GPIOB, 1);   // Yellow ON
+        }
+        else
+        {
+            // All LEDs OFF
+            _GPIO_PinClear(GPIOA, 7);
+            _GPIO_PinClear(GPIOB, 0);
+            _GPIO_PinClear(GPIOB, 1);
+        }
+    }
+}
+
 #endif
 
 /*************************** End of file ****************************/
