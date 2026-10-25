@@ -37,11 +37,23 @@ void _TIMER_DelayStart(TIM_TypeDef *pTim,_TIMER_Delay_Unit unit,uint16_t count, 
         pTim->ARR = (count > 0) ? (count - 1) : 0;
     }
     else
+{
+    // 64 MHz / 64000 = 1000 Hz (1 tick per millisecond).
+    // Avoid ARR = 0 for a 1 ms delay.
+    if (count <= 1)
     {
-        pTim->PSC = 63999;      // 1 kHz tick  => 1 tick = 1 ms
-        pTim->ARR = (count > 0) ? (count - 1) : 0;
+        // Use 10 kHz timer ticks (0.1 ms per tick).
+        // Ten ticks produce a 1 ms delay.
+        pTim->PSC = 6399;
+        pTim->ARR = 9;
     }
-
+    else
+    {
+        // One timer tick per millisecond.
+        pTim->PSC = 63999;
+        pTim->ARR = count - 1;
+    }
+}
     // latch PSC/ARR
     pTim->EGR |= TIM_EGR_UG;
 

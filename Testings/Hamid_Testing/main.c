@@ -14,6 +14,14 @@ Purpose : Generic application start
 #include "GPIO.h"
 #include "TIMER.h"
 #include "CLOCK.h"
+#include "i2c.h"
+#include "VL53L1X_api.h"
+#include "vl53l1_platform.h"
+
+//#define PartA
+//#define PartB
+#define PartC
+
 
 /*********************************************************************
 *
@@ -23,7 +31,7 @@ Purpose : Generic application start
 *   Application entry point.
 */
 
-
+#ifdef PartA
 // Onboard user LED: PA5
 _GPIO_PinDefinition UserLED = {GPIOA, 5};
 
@@ -70,6 +78,120 @@ int main(void)
         }
     }
 }
+#endif
 
+#ifdef PartB
+
+// Variables for SEGGER Watch
+volatile uint16_t sensorId = 0;
+volatile int sensorIdStatus = -1;
+volatile int sensorInitStatus = -1;
+volatile int testComplete = 0;
+
+int main(void)
+{
+    _CLOCK_PLL_To_64();
+
+    // Initialize I2C1: PB8 = SCL, PB9 = SDA
+    _I2C1_Init_PB89(_I2C_SpeedMode_100);
+
+    // Verify the VL53L1X model ID
+    sensorIdStatus = VL53L1X_GetSensorId(
+        0x52,
+        (uint16_t *)&sensorId
+    );
+
+    // Initialize sensor only if identification succeeds
+    if (sensorIdStatus == 0 && sensorId == 0xEACC)
+    {
+        sensorInitStatus = VL53L1X_SensorInit(0x52);
+    }
+
+    testComplete = 1;
+
+    while (1)
+    {
+        __NOP();
+    }
+}
+
+#endif
+
+#ifdef PartC
+// Variables for SEGGER Watch
+volatile uint16_t sensorId = 0;
+volatile uint16_t distance_mm = 0;
+volatile uint8_t dataReady = 0;
+
+volatile int sensorIdStatus = -1;
+volatile int sensorInitStatus = -1;
+volatile int startStatus = -1;
+volatile int readyStatus = -1;
+volatile int distanceStatus = -1;
+volatile int clearStatus = -1;
+
+volatile uint32_t measurementCount = 0;
+
+int main(void)
+{
+    _CLOCK_PLL_To_64();
+
+    // Initialize I2C1: PB8 = SCL, PB9 = SDA
+    _I2C1_Init_PB89(_I2C_SpeedMode_100);
+
+    // Verify sensor identification
+    sensorIdStatus = VL53L1X_GetSensorId(
+        0x52, (uint16_t *)&sensorId
+    );
+
+    if (sensorIdStatus == 0 && sensorId == 0xEACC)
+    {
+        // Initialize the VL53L1X
+        sensorInitStatus = VL53L1X_SensorInit(0x52);
+
+        if (sensorInitStatus == 0)
+        {
+            // Begin continuous distance measurements
+            startStatus = VL53L1X_StartRanging(0x52);
+
+            if (startStatus == 0)
+            {
+                while (1)
+                {
+                    dataReady = 0;
+
+                    // Check whether a measurement is available
+                    readyStatus = VL53L1X_CheckForDataReady(
+                        0x52, (uint8_t *)&dataReady
+                    );
+
+                    if (readyStatus == 0 && dataReady)
+                    {
+                        // Read distance in millimeters
+                        distanceStatus = VL53L1X_GetDistance(
+                            0x52, (uint16_t *)&distance_mm
+                        );
+
+                        // Clear interrupt for next measurement
+                        clearStatus = VL53L1X_ClearInterrupt(0x52);
+
+                        if (distanceStatus == 0 &&
+                            clearStatus == 0)
+                        {
+                            measurementCount++;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Remain here if initialization or ranging fails
+    while (1)
+    {
+        __NOP();
+    }
+}
+#endif
 
 /*************************** End of file ****************************/

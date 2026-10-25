@@ -4,18 +4,112 @@
 //
 // Simon Walker
 // Created September 2024, initial build
-// 
+//
 // Version 1.0 - Initial Build
 // Version 1.1 - Fix for Read function - corrected order of Start/Autoend
-// Version 1.2 - Added 'unstick' code in init to free the bus from an
-//               interrupted transaction (device could still be producing
-//               data, this clocks out pulses to free the transaction)
+// Version 1.2 - Added 'unstick' code in init to free the bus
 // Version 1.3 - Added GPIO code for inits, added two clocking options
+//
+// RehabGrid integration changes (October 2026):
+// - Keep the original public functions and PB67/PB89 pin choices.
+// - Bound all transfer/scan waits; detect NACK and peripheral errors.
+// - Wait for STOP and clear flags after hardware-ended transfers.
+// - Preserve software-end write -> repeated-start read transactions.
+// - Validate buffer arguments and handle errors consistently.
+//
+// Return values for StartWrite/StartRead:
+//    0 success, -1 timeout/invalid argument, -2 NACK,
+//   -3 bus/peripheral error.
+//
+// NOTE: I2C_POLL_LIMIT counts CPU polling iterations, NOT milliseconds.
+// NOTE: This driver is synchronous and not reentrant; only one caller
+//       may access I2C1 at a time.
 ////////////////////////////////////////////////////////////////////////
 
 #include "i2c.h"
 #include "gpio.h"
 #include "stm32g0xx.h"
+#include <stdint.h>
+#include <stddef.h>
+
+#define I2C_POLL_LIMIT  1000000UL
+
+// Diagnostic: preserve the I2C status before error cleanup
+volatile uint32_t debugI2CErrorISR = 0;
+
+// Clear latched flags that would otherwise affect the next transaction.
+static void I2C1_ClearFlags(void)
+{
+  I2C1->ICR = I2C_ICR_STOPCF | I2C_ICR_NACKCF |
+              I2C_ICR_BERRCF | I2C_ICR_ARLOCF |
+              I2C_ICR_OVRCF;
+}
+
+// On failure, request STOP if needed and wait a bounded time for release.
+// This is best-effort cleanup: if a device physically holds SCL/SDA low,
+// re-initialization/bus recovery may still be required.
+static void I2C1_Abort(void)
+{
+  if (I2C1->ISR & I2C_ISR_BUSY)
+    I2C1->CR2 |= I2C_CR2_STOP;
+
+  uint32_t timeout = I2C_POLL_LIMIT;
+  while ((I2C1->ISR & I2C_ISR_BUSY) && timeout-- > 0U)
+  {
+  }
+
+  I2C1_ClearFlags();
+}
+
+// Wait for a requested event, or return a negative error code.
+// The STOPF check detects an unexpected early STOP (e.g., after a NACK).
+static int I2C1_WaitFlag(uint32_t flag)
+{
+  uint32_t timeout = I2C_POLL_LIMIT;
+
+  while (timeout-- > 0U)
+  {
+    uint32_t isr = I2C1->ISR;
+
+    if (isr & I2C_ISR_NACKF)
+    {
+      I2C1_Abort();
+      return -2;
+    }
+
+    if (isr & (I2C_ISR_BERR | I2C_ISR_ARLO | I2C_ISR_OVR))
+{
+    debugI2CErrorISR = isr;
+    I2C1_Abort();
+    return -3;
+}
+    if (isr & flag)
+      return 0;
+
+   if ((isr & I2C_ISR_STOPF) && flag != I2C_ISR_STOPF)
+{
+    debugI2CErrorISR = isr;
+    I2C1_Abort();
+    return -3;
+}
+  }
+
+  I2C1_Abort();
+  return -1;
+}
+
+// Wait for bus idle before starting a NEW transaction.
+// Do not call this between a software-end write and its repeated-start read.
+static int I2C1_WaitIdle(void)
+{
+  uint32_t timeout = I2C_POLL_LIMIT;
+  while (I2C1->ISR & I2C_ISR_BUSY)
+  {
+    if (timeout-- == 0U)
+      return -1;
+  }
+  return 0;
+}
 
 // typical init for Nucleo G031 board
 // typical init for STMG041 proto board
@@ -41,13 +135,14 @@ int _I2C1_Init_PB67 (_I2C_SpeedMode smode)
 
   // TODO: if both lines are idle, this could probably be skipped...
 
-  // make SCL float high
+  // During recovery, SCL must be open drain (never drive the bus high).
+  _GPIO_Set_OutputType(GPIOB, CLOCK_PIN_NUM, _GPIO_OutputType_OpenDrain);
   _GPIO_PinSet(GPIOB, CLOCK_PIN_NUM);
 
   // GPIO up the pins to be non-alternate function (GPIO)
-  // PB6 should be output
+  // SCL should be output during bus recovery
   _GPIO_SetPinMode(GPIOB, CLOCK_PIN_NUM, _GPIO_PinMode_Output, _GPIO_Clock_On);
-  // PB7 should be input (should idle high)
+  // SDA should be input (should idle high)
   _GPIO_SetPinMode(GPIOB, DATA_PIN_NUM, _GPIO_PinMode_Input, _GPIO_Clock_On);
 
   // now clock out 12 slow pulses to end the clocking operation
@@ -128,13 +223,14 @@ int _I2C1_Init_PB89(_I2C_SpeedMode smode)
 
   // TODO: if both lines are idle, this could probably be skipped...
 
-  // make SCL float high
+  // During recovery, SCL must be open drain (never drive the bus high).
+  _GPIO_Set_OutputType(GPIOB, CLOCK_PIN_NUM, _GPIO_OutputType_OpenDrain);
   _GPIO_PinSet(GPIOB, CLOCK_PIN_NUM);
 
   // GPIO up the pins to be non-alternate function (GPIO)
-  // PB6 should be output
+  // SCL should be output during bus recovery
   _GPIO_SetPinMode(GPIOB, CLOCK_PIN_NUM, _GPIO_PinMode_Output, _GPIO_Clock_On);
-  // PB7 should be input (should idle high)
+  // SDA should be input (should idle high)
   _GPIO_SetPinMode(GPIOB, DATA_PIN_NUM, _GPIO_PinMode_Input, _GPIO_Clock_On);
 
   // now clock out 12 slow pulses to end the clocking operation
@@ -193,214 +289,162 @@ int _I2C1_Init_PB89(_I2C_SpeedMode smode)
   return 0;
 }
 
-int _I2C1_IsBusy (void)
+int _I2C1_IsBusy(void)
 {
   return (I2C1->ISR & I2C_ISR_BUSY);
 }
 
-int _I2C1_StartRead (unsigned char address, unsigned char bytecount, unsigned char * pData, _I2C_AutoEndOption endoption)
+int _I2C1_StartRead(unsigned char address, unsigned char bytecount,
+                    unsigned char *pData, _I2C_AutoEndOption endoption)
 {
-  // can't wait for bus to be busy in the case of a repeated start condition
+  // A read may follow a software-ended write: the bus is intentionally
+  // busy and TC is set. Therefore, do NOT wait for BUSY to clear here.
+  if (address > 0x7FU || bytecount == 0U || pData == NULL)
+    return -1;
 
-  // 7-bit address of target is written to SADD 7:1 (0, 8, 9 ignored)
-  I2C1->CR2 &= ~I2C_CR2_SADD_Msk;
-  I2C1->CR2 |=  (unsigned int)address << 1; // target address, shifted up one position
+  // Configure the 7-bit address, number of bytes and read direction.
+  // Clear AUTOEND for now. The instructor's original read sequence
+  // requests START before enabling AUTOEND for this repeated-start read.
+  // This ordering is under hardware test; do not treat it as verified yet.
+  uint32_t cr2 = I2C1->CR2;
+  cr2 &= ~(I2C_CR2_SADD_Msk | I2C_CR2_NBYTES_Msk |
+           I2C_CR2_RD_WRN_Msk | I2C_CR2_AUTOEND_Msk |
+           I2C_CR2_RELOAD_Msk);
+  cr2 |= ((uint32_t)address << 1);
+  cr2 |= ((uint32_t)bytecount << I2C_CR2_NBYTES_Pos);
+  cr2 |= I2C_CR2_RD_WRN;
+  I2C1->CR2 = cr2;
 
-  // setup bytes to transfer, excludes addressing byte
-  I2C1->CR2 &= ~I2C_CR2_NBYTES_Msk;
-  I2C1->CR2 |= bytecount << I2C_CR2_NBYTES_Pos;
+  // Request START (repeated START after the register-address write).
+  I2C1->CR2 |= I2C_CR2_START;
 
-  // set direction of transfer
-  I2C1->CR2 |= I2C_CR2_RD_WRN; // 1 == want to read
+  // For a hardware-ended read, enable STOP generation after START.
+  // This follows the instructor's Version 1.1 ordering.
+  if (endoption == _I2C_AutoEnd_Hardware)
+    I2C1->CR2 |= I2C_CR2_AUTOEND;
 
-  // issue the start condition
-  I2C1->CR2 |= I2C_CR2_START; // start the communication...
-
-  // autoend moved to after start condition issued,
-  //  as in a repeated start, this would terminate the transaction
-  //  if hardware end was desired in the 2nd half of the transaction
-  // so, assume for a restart, the transaction was started as software end
-  //  the the TC flag will be set, and the clock is being stretched
-  // if we flip to hardware, we want the NBYTES value to be non-zero
-
-  // set the AUTOEND option
-  I2C1->CR2 &= ~I2C_CR2_AUTOEND_Msk;
-  // this kills an ongoing transaction at this point***
-  I2C1->CR2 |= (((unsigned int)endoption) << I2C_CR2_AUTOEND_Pos);
-
-  // no need to wait for address transmission, unless there is a problem  
-  //  as the next event if all goes well is a byte from the target device
-
-  int readcounter = 0;
-
-  while (readcounter < bytecount)
+  for (unsigned int i = 0; i < bytecount; ++i)
   {
-    // wait for byte
-    while (!(I2C1->ISR & I2C_ISR_RXNE))
-    {
-    }
-  
-    // read it
-    pData[readcounter++] = I2C1->RXDR;
+    int status = I2C1_WaitFlag(I2C_ISR_RXNE);
+    if (status != 0)
+      return status;
+
+    pData[i] = (unsigned char)I2C1->RXDR;
   }
 
   if (endoption == _I2C_AutoEnd_Software)
   {
-    // don't sent stop condition, but wait for TC flag
-    while (!(I2C1->ISR & I2C_ISR_TC))
-    {
-    }  
-
-    // we're done here, leave transaction active and return
-    return 0;
+    // TC indicates that bytes are complete; leave bus active.
+    return I2C1_WaitFlag(I2C_ISR_TC);
   }
 
+  // Hardware AUTOEND issues STOP after the last received byte.
+  int status = I2C1_WaitFlag(I2C_ISR_STOPF);
+  if (status != 0)
+    return status;
+
+  I2C1_ClearFlags();
   return 0;
 }
 
-int _I2C1_StartWrite (unsigned char address, unsigned char bytecount, unsigned char * pData, _I2C_AutoEndOption endoption)
-{  
-  // upon entry, if required, wait for bus to be busy or not
-  // this assumes no repreated start in the write case
-  while (_I2C1_IsBusy())
-  {;;;}
+int _I2C1_StartWrite(unsigned char address, unsigned char bytecount,
+                     unsigned char *pData, _I2C_AutoEndOption endoption)
+{
+  // A write starts a NEW transaction. A software-ended write is followed
+  // by StartRead(), not by another StartWrite() in this API.
+  if (address > 0x7FU || bytecount == 0U || pData == NULL)
+    return -1;
 
-  // 7-bit address of target is written to SADD 7:1 (0, 8, 9 ignored)
-  I2C1->CR2 &= ~I2C_CR2_SADD_Msk;
-  I2C1->CR2 |=  (unsigned int)address << 1; // target address, shifted up one position
+  int status = I2C1_WaitIdle();
+  if (status != 0)
+    return status;
 
-  // setup bytes to transfer, excludes addressing byte
-  I2C1->CR2 &= ~I2C_CR2_NBYTES_Msk;
-  I2C1->CR2 |= bytecount << I2C_CR2_NBYTES_Pos;
+  I2C1_ClearFlags();
 
-  // set direction of transfer
-  I2C1->CR2 &= ~I2C_CR2_RD_WRN_Msk;
+  // Configure 7-bit target address, NBYTES, write direction, AUTOEND.
+  uint32_t cr2 = I2C1->CR2;
+  cr2 &= ~(I2C_CR2_SADD_Msk | I2C_CR2_NBYTES_Msk |
+           I2C_CR2_RD_WRN_Msk | I2C_CR2_AUTOEND_Msk |
+           I2C_CR2_RELOAD_Msk);
+  cr2 |= ((uint32_t)address << 1);
+  cr2 |= ((uint32_t)bytecount << I2C_CR2_NBYTES_Pos);
+  if (endoption == _I2C_AutoEnd_Hardware)
+    cr2 |= I2C_CR2_AUTOEND;
+  I2C1->CR2 = cr2;
 
-  // set the AUTOEND option
-  I2C1->CR2 &= ~I2C_CR2_AUTOEND_Msk;
-  I2C1->CR2 |= (((unsigned int)endoption) << I2C_CR2_AUTOEND_Pos);
+  I2C1->CR2 |= I2C_CR2_START;
 
-  // issue the start condition
-  I2C1->CR2 |= I2C_CR2_START; // start the communication...
-      
-  // wait for address to clear
-  while (!(I2C1->ISR & I2C_ISR_TXIS))
+  // TXIS signals that TXDR can accept the next byte.
+  // Check NACK, bus errors and timeout while waiting for each byte.
+  for (unsigned int i = 0; i < bytecount; ++i)
   {
-      if (I2C1->ISR & I2C_ISR_NACKF)
-      {
-        // welp, no ack here, so device did not respond, need to clear
-        //  nack flag
-        return -2;
-      }
+    status = I2C1_WaitFlag(I2C_ISR_TXIS);
+    if (status != 0)
+      return status;
+
+    I2C1->TXDR = pData[i];
   }
-
-  // all good so far, so write out the data, with the end style selected
-  for (int iByteCount = bytecount; iByteCount > 1; iByteCount--)
-  {
-    I2C1->TXDR = pData[bytecount - iByteCount];
-
-    // wait for byte to clear
-    while (!(I2C1->ISR & I2C_ISR_TXIS))
-    { ;;; }
-  }
-
-  // final (or only) byte is controlled by TC flag if software end
-  I2C1->TXDR = pData [bytecount - 1];
 
   if (endoption == _I2C_AutoEnd_Software)
   {
-    // don't send stop condition, but wait for TC flag
-    // this is more for followup transactions, as a restart can't
-    //  use busy to tell if a transaction is ongoing
-    // we could do TC polling in the read function, if we expect
-    //  that we are under a restart condition
-    // it's slower here, cause we are waiting for the transmission
-    //  to complete, but it makes the read easier if we enter
-    //  always knowning the transaction is ready to continue
-    // maybe a future update
-    
-    while (!(I2C1->ISR & I2C_ISR_TC))
-    { ;;; }  
-
-    // we're done here, leave transaction active and return
-    return 0;
+    // No STOP: wait for TC so StartRead() can issue repeated START.
+    return I2C1_WaitFlag(I2C_ISR_TC);
   }
 
-  // so, we're under hardware end (STOP will be automatically issued)  
+  // Hardware AUTOEND: STOP is generated after the final byte.
+  status = I2C1_WaitFlag(I2C_ISR_STOPF);
+  if (status != 0)
+    return status;
 
+  I2C1_ClearFlags();
   return 0;
 }
 
-// requires array of 128 bytes to hold address results
-void _I2C1_BusScan (unsigned char * pAddressTable)
+// Scan addresses 0x08..0x7D. Requires a 128-byte output array.
+// Each address probe uses NBYTES=0, software end; ACK -> TC, NACK ->
+// NACKF/STOPF. Always release bus before probing the next address.
+void _I2C1_BusScan(unsigned char *pAddressTable)
 {
-  // attempt a bus scan, then port to function when operational
-  // should be able to announce address, if no ACK module should auto stop
-  //  if ack, dump address and issue stop, then try next
-  I2C1->CR1 = 0;
-  for (int i = 0; i < 10; ++i) // at 1000, lose 0x10, otherwise lose 0x53 
+  if (pAddressTable == NULL)
+    return;
+
+  for (unsigned int i = 0; i < 128U; ++i)
+    pAddressTable[i] = 0;
+
+  for (unsigned int addr = 0x08U; addr < 0x7EU; ++addr)
   {
-  }
-  I2C1->CR1 |= I2C_CR1_PE;
-
-  for (unsigned char addr = 0x08; addr < 0x7E; addr++)
-  {
-    // setup address
-    I2C1->CR2 = 0;
-    I2C1->CR2 |=  addr << 1; // target address, shifted up one position (7-bit mode)    
-
-    // we are sending zero bytes, so byte flagging for sent bytes won't be active
-    //  we are just sending the address of the device and looking for no ACK
-    //  this also takes autoend off the table, as we are not sending data        
-
-    // issue start condition
-    I2C1->CR2 |= I2C_CR2_START; // start the communication...
-
-    // can't depend on TXIS, as there is no transmission of data here
-    //  there will either be a NACK/STOPF or a TC
-
-    // wait for transmission to complete (device present case)
-    //  or STOPF/NACK (no device case)
-    while (! ((I2C1->ISR & I2C_ISR_NACKF_Msk) || (I2C1->ISR & I2C_ISR_STOPF_Msk) || (I2C1->ISR & I2C_ISR_TC_Msk)))    
-    {;;;}
-    
-    if ((I2C1->ISR & I2C_ISR_NACKF) || (I2C1->ISR & I2C_ISR_STOPF_Msk))
+    if (I2C1_WaitIdle() != 0)
     {
-      // wait a bit for stop flag to maybe be expressed (can take a bit)
-      for (int i = 0; i < 100000; ++i)
+      I2C1_Abort();
+      break; // Bus stuck: don't continue scanning.
+    }
+
+    I2C1_ClearFlags();
+
+    // A zero-byte write transmits only the address.
+    I2C1->CR2 = ((uint32_t)addr << 1);
+    I2C1->CR2 |= I2C_CR2_START;
+
+    uint32_t timeout = I2C_POLL_LIMIT;
+    int acknowledged = 0;
+
+    while (timeout-- > 0U)
+    {
+      uint32_t isr = I2C1->ISR;
+      if (isr & (I2C_ISR_NACKF | I2C_ISR_STOPF |
+                 I2C_ISR_BERR | I2C_ISR_ARLO | I2C_ISR_OVR))
+        break;
+      if (isr & I2C_ISR_TC)
       {
-        // bail early if NACK and STOP present
-        if ( (I2C1->ISR & (I2C_ISR_NACKF_Msk | I2C_ISR_STOPF_Msk)) == (I2C_ISR_NACKF_Msk | I2C_ISR_STOPF_Msk))
-          break;
-      }      
-
-      // could have NACK (expresses immediately on 9th bit)
-      if (I2C1->ISR & I2C_ISR_NACKF)
-      {
-        I2C1->ICR = I2C_ICR_NACKCF_Msk; // 32.7.8 -> clear NACK flag
-
-        // require delay here, or things don't work...
-        for (int i = 0; i < 1000; ++i)
-        {;;;}
-      }
-
-      // could also have stop (hardware detected), takes longer to present
-      if (I2C1->ISR & I2C_ISR_STOPF)
-      {
-        I2C1->ICR = I2C_ICR_STOPCF_Msk; // clear STOPF flag
-
-        // may require delay here, or things don't work...
-        for (int i = 0; i < 1000; ++i)
-        {;;;}        
+        acknowledged = 1;
+        break;
       }
     }
-    else // should be TC
-    {
-      // no NACK, so we good, record address        
-      pAddressTable[addr] = addr;
-      
-      // issue stop to release the bus
-      I2C1->CR2 |= I2C_CR2_STOP;
-    }    
+
+    if (acknowledged)
+      pAddressTable[addr] = (unsigned char)addr;
+
+    // Stop and clear flags whether the address ACKed or NACKed.
+    I2C1_Abort();
   }
 }

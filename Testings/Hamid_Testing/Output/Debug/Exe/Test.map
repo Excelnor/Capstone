@@ -21,24 +21,27 @@ Memory use by input file:
   Object File                                       RX Code     RO Data     RW Data     ZI Data
   ---------------------------------------------  ----------  ----------  ----------  ----------
   CLOCK.o                                               248                                    
-  GPIO.o                                                248                                    
-  main.o                                                120                       8            
+  GPIO.o                                                504                                    
+  i2c.o                                               1 216                                   4
+  main.o                                                224                      24           9
   SEGGER_THUMB_Startup.o                                 20                                    
   stm32g0b1xx_Vectors.o                                 258                                    
   STM32G0xx_Startup.o                                    56                                    
   system_stm32g0xx.o                                    374          64           4            
-  TIMER.o                                               412                                  12
+  TIMER.o                                               420                                  12
+  vl53l1_platform.o                                     606                       8            
+  VL53L1X_api.o                                         682          91                        
   ---------------------------------------------  ----------  ----------  ----------  ----------
-  Subtotal (8 objects)                                1 736          64          12          12
+  Subtotal (11 objects)                               4 608         155          36          25
   ---------------------------------------------  ----------  ----------  ----------  ----------
   libc_v6m_t_le_eabi_balanced.a                          64                                    
   SEGGER_crtinit_v6m_t_le_eabi_balanced.a                74                                    
   ---------------------------------------------  ----------  ----------  ----------  ----------
   Subtotal (2 archives)                                 138                                    
   ---------------------------------------------  ----------  ----------  ----------  ----------
-  Linker created (shared data, fills, blocks):                       48                   2 048
+  Linker created (shared data, fills, blocks):                       72                   2 048
   =============================================  ==========  ==========  ==========  ==========
-  Total:                                              1 874         112          12       2 060
+  Total:                                              4 746         227          36       2 073
   =============================================  ==========  ==========  ==========  ==========
 
 Memory use by archive member:
@@ -51,25 +54,25 @@ Memory use by archive member:
                                                          74                                    
   ---------------------------------------------  ----------  ----------  ----------  ----------
   Subtotal (2 members from 2 archives)                  138                                    
-  Objects (8 files)                                   1 736          64          12          12
-  Linker created (shared data, fills, blocks):                       48                   2 048
+  Objects (11 files)                                  4 608         155          36          25
+  Linker created (shared data, fills, blocks):                       72                   2 048
   =============================================  ==========  ==========  ==========  ==========
-  Total:                                              1 874         112          12       2 060
+  Total:                                              4 746         227          36       2 073
   =============================================  ==========  ==========  ==========  ==========
 
 Memory use by linker:
 
   Description                                       RX Code     RO Data     RW Data     ZI Data
   ---------------------------------------------  ----------  ----------  ----------  ----------
-  Initialization table                                               48                        
+  Initialization table                                               72                        
   Memory for block 'stack'                                                                2 048
   ---------------------------------------------  ----------  ----------  ----------  ----------
-  Subtotal (linker created):                                         48                   2 048
+  Subtotal (linker created):                                         72                   2 048
   ---------------------------------------------  ----------  ----------  ----------  ----------
-  Objects (8 files)                                   1 736          64          12          12
+  Objects (11 files)                                  4 608         155          36          25
   Archives (2 files)                                    138                                    
   =============================================  ==========  ==========  ==========  ==========
-  Total:                                              1 874         112          12       2 060
+  Total:                                              4 746         227          36       2 073
   =============================================  ==========  ==========  ==========  ==========
 
 
@@ -87,79 +90,120 @@ Sections by address:
                                                                 Code  RX  stm32g0b1xx_Vectors.o
   080000bc-0800022f  SystemCoreClockUpdate             372   4  Code  RX  system_stm32g0xx.o
   08000230-0800026f  AHBPrescTable                      64   4  Cnst  RO  system_stm32g0xx.o
-  08000270-080002e7  main                              120   4  Code  RX  main.o
-  080002e8-080003df  _CLOCK_PLL_To_64                  248   4  Code  RX  CLOCK.o
-  080003e0-08000443  _GPIO_ClockEnable                 100   4  Code  RX  GPIO.o
-  08000444-080004d3  _TIMER_ClockOn                    144   4  Code  RX  TIMER.o
-  080004d4-0800058b  _TIMER_DelayStart                 184   4  Code  RX  TIMER.o
-  0800058c-080005df  _TIMER_DelayComplete               84   4  Code  RX  TIMER.o
-  080005e0-080005f3  _start                             20   4  Code  RX  SEGGER_THUMB_Startup.o
-  080005f4-08000623  HardFault_Handler                  48   4  Code  RX  STM32G0xx_Startup.o
-  08000624-0800065b  __aeabi_uidiv                      56   4  Code  RX  intasmops_arm.o (libc_v6m_t_le_eabi_balanced.a)
-  0800065c-08000663  __aeabi_idiv0                       8   4  Code  RX  intasmops_arm.o (libc_v6m_t_le_eabi_balanced.a)
-  08000664-08000665  SystemInit                          2   2  Code  RX  system_stm32g0xx.o
-  08000666-0800067b  _GPIO_PinClear                     22   2  Code  RX  GPIO.o
-  0800067c-080006bd  _GPIO_SetPinMode                   66   2  Code  RX  GPIO.o
-  080006be-080006bf  NMI_Handler                         2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006c0-080006c1  SVC_Handler                         2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006c2-080006c3  PendSV_Handler                      2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006c4-080006c5  SysTick_Handler                     2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006c6-080006c7  WWDG_IRQHandler                     2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006c8-080006c9  PVD_VDDIO2_IRQHandler               2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006ca-080006cb  RTC_TAMP_IRQHandler                 2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006cc-080006cd  FLASH_IRQHandler                    2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006ce-080006cf  RCC_CRS_IRQHandler                  2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006d0-080006d1  EXTI0_1_IRQHandler                  2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006d2-080006d3  EXTI2_3_IRQHandler                  2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006d4-080006d5  EXTI4_15_IRQHandler                 2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006d6-080006d7  USB_UCPD1_2_IRQHandler              2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006d8-080006d9  DMA1_Channel1_IRQHandler            2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006da-080006db  DMA1_Channel2_3_IRQHandler
+  08000270-0800034f  main                              224   4  Code  RX  main.o
+  08000350-08000447  _CLOCK_PLL_To_64                  248   4  Code  RX  CLOCK.o
+  08000448-080004ab  _GPIO_ClockEnable                 100   4  Code  RX  GPIO.o
+  080004ac-0800053b  _TIMER_ClockOn                    144   4  Code  RX  TIMER.o
+  0800053c-080005fb  _TIMER_DelayStart                 192   4  Code  RX  TIMER.o
+  080005fc-0800064f  _TIMER_DelayComplete               84   4  Code  RX  TIMER.o
+  08000650-080007d7  _I2C1_Init_PB89                   392   4  Code  RX  i2c.o
+  080007d8-080008cf  _I2C1_StartRead                   248   4  Code  RX  i2c.o
+  080008d0-0800096b  I2C1_WaitFlag                     156   4  Code  RX  i2c.o
+  0800096c-0800097b  I2C1_ClearFlags                    16   4  Code  RX  i2c.o
+  0800097c-08000a7f  _I2C1_StartWrite                  260   4  Code  RX  i2c.o
+  08000a80-08000ab7  I2C1_WaitIdle                      56   4  Code  RX  i2c.o
+  08000ab8-08000b0f  I2C1_Abort                         88   4  Code  RX  i2c.o
+  08000b10-08000c1b  VL53L1X_SensorInit                268   4  Code  RX  VL53L1X_api.o
+  08000c1c-08000cc3  VL53L1_ReadMulti                  168   4  Code  RX  vl53l1_platform.o
+  08000cc4-08000d3b  VL53L1_WaitMs                     120   4  Code  RX  vl53l1_platform.o
+  08000d3c-08000d4f  _start                             20   4  Code  RX  SEGGER_THUMB_Startup.o
+  08000d50-08000d7f  HardFault_Handler                  48   4  Code  RX  STM32G0xx_Startup.o
+  08000d80-08000db7  __aeabi_uidiv                      56   4  Code  RX  intasmops_arm.o (libc_v6m_t_le_eabi_balanced.a)
+  08000db8-08000dbf  __aeabi_idiv0                       8   4  Code  RX  intasmops_arm.o (libc_v6m_t_le_eabi_balanced.a)
+  08000dc0-08000dc1  SystemInit                          2   2  Code  RX  system_stm32g0xx.o
+  08000dc2-08000dd7  _GPIO_PinClear                     22   2  Code  RX  GPIO.o
+  08000dd8-08000e19  _GPIO_SetPinMode                   66   2  Code  RX  GPIO.o
+  08000e1a-08000e67  _GPIO_Set_OutputType               78   2  Code  RX  GPIO.o
+  08000e68-08000eb1  _GPIO_Set_PullType                 74   2  Code  RX  GPIO.o
+  08000eb2-08000f1b  VL53L1X_CheckForDataReady         106   2  Code  RX  VL53L1X_api.o
+  08000f1c-08000f45  VL53L1X_StopRanging                42   2  Code  RX  VL53L1X_api.o
+  08000f46-08000f8b  VL53L1X_GetInterruptPolarity
+                                                        70   2  Code  RX  VL53L1X_api.o
+  08000f8c-08000fad  VL53L1_RdByte                      34   2  Code  RX  vl53l1_platform.o
+  08000fae-08000faf  NMI_Handler                         2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fb0-08000fb1  SVC_Handler                         2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fb2-08000fb3  PendSV_Handler                      2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fb4-08000fb5  SysTick_Handler                     2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fb6-08000fb7  WWDG_IRQHandler                     2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fb8-08000fb9  PVD_VDDIO2_IRQHandler               2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fba-08000fbb  RTC_TAMP_IRQHandler                 2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fbc-08000fbd  FLASH_IRQHandler                    2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fbe-08000fbf  RCC_CRS_IRQHandler                  2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fc0-08000fc1  EXTI0_1_IRQHandler                  2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fc2-08000fc3  EXTI2_3_IRQHandler                  2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fc4-08000fc5  EXTI4_15_IRQHandler                 2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fc6-08000fc7  USB_UCPD1_2_IRQHandler              2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fc8-08000fc9  DMA1_Channel1_IRQHandler            2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fca-08000fcb  DMA1_Channel2_3_IRQHandler
                                                          2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006dc-080006dd  DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQHandler
+  08000fcc-08000fcd  DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQHandler
                                                          2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006de-080006df  ADC1_COMP_IRQHandler                2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006e0-080006e1  TIM1_BRK_UP_TRG_COM_IRQHandler
+  08000fce-08000fcf  ADC1_COMP_IRQHandler                2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fd0-08000fd1  TIM1_BRK_UP_TRG_COM_IRQHandler
                                                          2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006e2-080006e3  TIM1_CC_IRQHandler                  2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006e4-080006e5  TIM2_IRQHandler                     2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006e6-080006e7  TIM3_TIM4_IRQHandler                2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006e8-080006e9  TIM6_DAC_LPTIM1_IRQHandler
+  08000fd2-08000fd3  TIM1_CC_IRQHandler                  2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fd4-08000fd5  TIM2_IRQHandler                     2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fd6-08000fd7  TIM3_TIM4_IRQHandler                2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fd8-08000fd9  TIM6_DAC_LPTIM1_IRQHandler
                                                          2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006ea-080006eb  TIM7_LPTIM2_IRQHandler              2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006ec-080006ed  TIM14_IRQHandler                    2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006ee-080006ef  TIM15_IRQHandler                    2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006f0-080006f1  TIM16_FDCAN_IT0_IRQHandler
+  08000fda-08000fdb  TIM7_LPTIM2_IRQHandler              2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fdc-08000fdd  TIM14_IRQHandler                    2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fde-08000fdf  TIM15_IRQHandler                    2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fe0-08000fe1  TIM16_FDCAN_IT0_IRQHandler
                                                          2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006f2-080006f3  TIM17_FDCAN_IT1_IRQHandler
+  08000fe2-08000fe3  TIM17_FDCAN_IT1_IRQHandler
                                                          2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006f4-080006f5  I2C1_IRQHandler                     2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006f6-080006f7  I2C2_3_IRQHandler                   2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006f8-080006f9  SPI1_IRQHandler                     2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006fa-080006fb  SPI2_3_IRQHandler                   2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006fc-080006fd  USART1_IRQHandler                   2   2  Code  RX  stm32g0b1xx_Vectors.o
-  080006fe-080006ff  USART2_LPUART2_IRQHandler           2   2  Code  RX  stm32g0b1xx_Vectors.o
-  08000700-08000701  USART3_4_5_6_LPUART1_IRQHandler
+  08000fe4-08000fe5  I2C1_IRQHandler                     2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fe6-08000fe7  I2C2_3_IRQHandler                   2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fe8-08000fe9  SPI1_IRQHandler                     2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fea-08000feb  SPI2_3_IRQHandler                   2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fec-08000fed  USART1_IRQHandler                   2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000fee-08000fef  USART2_LPUART2_IRQHandler           2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000ff0-08000ff1  USART3_4_5_6_LPUART1_IRQHandler
                                                          2   2  Code  RX  stm32g0b1xx_Vectors.o
-  08000702-08000703  CEC_IRQHandler                      2   2  Code  RX  stm32g0b1xx_Vectors.o
-  08000704-08000717  _GPIO_PinDSet                      20   2  Code  RX  GPIO.o
-  08000718-0800072b  _GPIO_PinSet                       20   2  Code  RX  GPIO.o
-  0800072c-0800073f  _GPIO_PinDClear                    20   2  Code  RX  GPIO.o
-  08000740-08000747  reset_handler                       8   2  Code  RX  STM32G0xx_Startup.o
-  08000748-0800074b  [.init_array]                       4   4  ----  --  STM32G0xx_Startup.o
-  0800074c-0800076f  __SEGGER_init_ctors                36   4  Code  RX  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
-  08000770-08000793  __SEGGER_init_table__              36   4  Cnst  RO  [ Linker created ]
-  08000794-0800079f  __SEGGER_init_data__               12   4  Cnst  RO  [ Linker created ]
-  080007a0-080007b1  __SEGGER_init_zero                 18   2  Code  RX  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
-  080007b2-080007c5  __SEGGER_init_copy                 20   2  Code  RX  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
-  080007c6-1fffffff  ( UNUSED .=.+402651194 )   402 651 194
+  08000ff2-08000ff3  CEC_IRQHandler                      2   2  Code  RX  stm32g0b1xx_Vectors.o
+  08000ff4-08001007  _GPIO_PinSet                       20   2  Code  RX  GPIO.o
+  08001008-08001097  _GPIO_SetPinAlternateFunction
+                                                       144   2  Code  RX  GPIO.o
+  08001098-080010c3  VL53L1X_StartRanging               44   2  Code  RX  VL53L1X_api.o
+  080010c4-080010ef  VL53L1X_ClearInterrupt             44   2  Code  RX  VL53L1X_api.o
+  080010f0-08001127  VL53L1X_GetSensorId                56   2  Code  RX  VL53L1X_api.o
+  08001128-0800115b  VL53L1X_GetDistance                52   2  Code  RX  VL53L1X_api.o
+  0800115c-080011eb  VL53L1_WriteMulti                 144   2  Code  RX  vl53l1_platform.o
+  080011ec-080011fb  SensorAddress                      16   2  Code  RX  vl53l1_platform.o
+  080011fc-0800121f  VL53L1_WrByte                      36   2  Code  RX  vl53l1_platform.o
+  08001220-08001277  VL53L1_RdWord                      88   2  Code  RX  vl53l1_platform.o
+  08001278-0800127f  reset_handler                       8   2  Code  RX  STM32G0xx_Startup.o
+  08001280-080012da  VL51L1X_DEFAULT_CONFIGURATION
+                                                        91   1  Cnst  RO  VL53L1X_api.o
+  080012db-080012db  ( UNUSED .=.+1 )                    1   -  ----  -   -
+  080012dc-080012df  [.init_array]                       4   4  ----  --  STM32G0xx_Startup.o
+  080012e0-08001303  __SEGGER_init_ctors                36   4  Code  RX  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
+  08001304-08001327  __SEGGER_init_table__              36   4  Cnst  RO  [ Linker created ]
+  08001328-0800134b  __SEGGER_init_data__               36   4  Cnst  RO  [ Linker created ]
+  0800134c-0800135d  __SEGGER_init_zero                 18   2  Code  RX  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
+  0800135e-08001371  __SEGGER_init_copy                 20   2  Code  RX  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
+  08001372-1fffffff  ( UNUSED .=.+402648206 )   402 648 206
                                                              -  ----  -   -
   20000000-20000003  testSR                              4   4  Zero  ZI  TIMER.o
   20000004-20000007  testCR1                             4   4  Zero  ZI  TIMER.o
   20000008-2000000b  testCNT                             4   4  Zero  ZI  TIMER.o
-  2000000c-20000013  UserLED                             8   4  Init  RW  main.o
-  20000014-20000017  SystemCoreClock                     4   4  Init  RW  system_stm32g0xx.o
-  20000018-200237ff  ( UNUSED .=.+145384 )         145 384   -  ----  -   -
+  2000000c-2000000f  measurementCount                    4   4  Zero  ZI  main.o
+  20000010-20000013  debugI2CErrorISR                    4   4  Zero  ZI  i2c.o
+  20000014-20000015  sensorId                            2   2  Zero  ZI  main.o
+  20000016-20000017  distance_mm                         2   2  Zero  ZI  main.o
+  20000018-20000018  dataReady                           1   1  Zero  ZI  main.o
+  20000019-2000001b  ( UNUSED .=.+3 )                    3   -  ----  -   -
+  2000001c-2000001f  startStatus                         4   4  Init  RW  main.o
+  20000020-20000023  sensorInitStatus                    4   4  Init  RW  main.o
+  20000024-20000027  sensorIdStatus                      4   4  Init  RW  main.o
+  20000028-2000002b  readyStatus                         4   4  Init  RW  main.o
+  2000002c-2000002f  distanceStatus                      4   4  Init  RW  main.o
+  20000030-20000033  debugWriteResult                    4   4  Init  RW  vl53l1_platform.o
+  20000034-20000037  debugReadResult                     4   4  Init  RW  vl53l1_platform.o
+  20000038-2000003b  clearStatus                         4   4  Init  RW  main.o
+  2000003c-2000003f  SystemCoreClock                     4   4  Init  RW  system_stm32g0xx.o
+  20000040-200237ff  ( UNUSED .=.+145344 )         145 344   -  ----  -   -
   20023800-20023fff  [.bss.block.stack]              2 048   8  None  ZI  [ Linker created ]
 
 
@@ -173,166 +217,241 @@ Function symbols by name:
 
   Symbol name                   Address        Size  Align  Type  Bd  Object File
   -------------------------  ----------  ----------  -----  ----  --  -----------
-  ADC1_COMP_IRQHandler       0x080006DF                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  CEC_IRQHandler             0x08000703                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  ADC1_COMP_IRQHandler       0x08000FCF                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  CEC_IRQHandler             0x08000FF3                  2  Code  Wk  stm32g0b1xx_Vectors.o
   DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQHandler
-                             0x080006DD                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  DMA1_Channel1_IRQHandler   0x080006D9                  2  Code  Wk  stm32g0b1xx_Vectors.o
+                             0x08000FCD                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  DMA1_Channel1_IRQHandler   0x08000FC9                  2  Code  Wk  stm32g0b1xx_Vectors.o
   DMA1_Channel2_3_IRQHandler
-                             0x080006DB                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  EXTI0_1_IRQHandler         0x080006D1                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  EXTI2_3_IRQHandler         0x080006D3                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  EXTI4_15_IRQHandler        0x080006D5                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  FLASH_IRQHandler           0x080006CD                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  HardFault_Handler          0x080005F5                  4  Code  Wk  STM32G0xx_Startup.o
-  I2C1_IRQHandler            0x080006F5                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  I2C2_3_IRQHandler          0x080006F7                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  NMI_Handler                0x080006BF                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  PVD_VDDIO2_IRQHandler      0x080006C9                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  PendSV_Handler             0x080006C3                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  RCC_CRS_IRQHandler         0x080006CF                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  RTC_TAMP_IRQHandler        0x080006CB                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  Reset_Handler              0x08000741                  2  Code  Gb  STM32G0xx_Startup.o
-  SPI1_IRQHandler            0x080006F9                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  SPI2_3_IRQHandler          0x080006FB                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  SVC_Handler                0x080006C1                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  SysTick_Handler            0x080006C5                  2  Code  Wk  stm32g0b1xx_Vectors.o
+                             0x08000FCB                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  EXTI0_1_IRQHandler         0x08000FC1                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  EXTI2_3_IRQHandler         0x08000FC3                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  EXTI4_15_IRQHandler        0x08000FC5                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  FLASH_IRQHandler           0x08000FBD                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  HardFault_Handler          0x08000D51                  4  Code  Wk  STM32G0xx_Startup.o
+  I2C1_Abort                 0x08000AB9          88      4  Code  Lc  i2c.o
+  I2C1_ClearFlags            0x0800096D          16      4  Code  Lc  i2c.o
+  I2C1_IRQHandler            0x08000FE5                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  I2C1_WaitFlag              0x080008D1         156      4  Code  Lc  i2c.o
+  I2C1_WaitIdle              0x08000A81          56      4  Code  Lc  i2c.o
+  I2C2_3_IRQHandler          0x08000FE7                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  NMI_Handler                0x08000FAF                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  PVD_VDDIO2_IRQHandler      0x08000FB9                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  PendSV_Handler             0x08000FB3                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  RCC_CRS_IRQHandler         0x08000FBF                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  RTC_TAMP_IRQHandler        0x08000FBB                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  Reset_Handler              0x08001279                  2  Code  Gb  STM32G0xx_Startup.o
+  SPI1_IRQHandler            0x08000FE9                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  SPI2_3_IRQHandler          0x08000FEB                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  SVC_Handler                0x08000FB1                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  SensorAddress              0x080011ED          16      2  Code  Lc  vl53l1_platform.o
+  SysTick_Handler            0x08000FB5                  2  Code  Wk  stm32g0b1xx_Vectors.o
   SystemCoreClockUpdate      0x080000BD         372      4  Code  Gb  system_stm32g0xx.o
-  SystemInit                 0x08000665           2      2  Code  Gb  system_stm32g0xx.o
-  TIM14_IRQHandler           0x080006ED                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  TIM15_IRQHandler           0x080006EF                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  SystemInit                 0x08000DC1           2      2  Code  Gb  system_stm32g0xx.o
+  TIM14_IRQHandler           0x08000FDD                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  TIM15_IRQHandler           0x08000FDF                  2  Code  Wk  stm32g0b1xx_Vectors.o
   TIM16_FDCAN_IT0_IRQHandler
-                             0x080006F1                  2  Code  Wk  stm32g0b1xx_Vectors.o
+                             0x08000FE1                  2  Code  Wk  stm32g0b1xx_Vectors.o
   TIM17_FDCAN_IT1_IRQHandler
-                             0x080006F3                  2  Code  Wk  stm32g0b1xx_Vectors.o
+                             0x08000FE3                  2  Code  Wk  stm32g0b1xx_Vectors.o
   TIM1_BRK_UP_TRG_COM_IRQHandler
-                             0x080006E1                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  TIM1_CC_IRQHandler         0x080006E3                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  TIM2_IRQHandler            0x080006E5                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  TIM3_TIM4_IRQHandler       0x080006E7                  2  Code  Wk  stm32g0b1xx_Vectors.o
+                             0x08000FD1                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  TIM1_CC_IRQHandler         0x08000FD3                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  TIM2_IRQHandler            0x08000FD5                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  TIM3_TIM4_IRQHandler       0x08000FD7                  2  Code  Wk  stm32g0b1xx_Vectors.o
   TIM6_DAC_LPTIM1_IRQHandler
-                             0x080006E9                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  TIM7_LPTIM2_IRQHandler     0x080006EB                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  USART1_IRQHandler          0x080006FD                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  USART2_LPUART2_IRQHandler  0x080006FF                  2  Code  Wk  stm32g0b1xx_Vectors.o
+                             0x08000FD9                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  TIM7_LPTIM2_IRQHandler     0x08000FDB                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  USART1_IRQHandler          0x08000FED                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  USART2_LPUART2_IRQHandler  0x08000FEF                  2  Code  Wk  stm32g0b1xx_Vectors.o
   USART3_4_5_6_LPUART1_IRQHandler
-                             0x08000701                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  USB_UCPD1_2_IRQHandler     0x080006D7                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  WWDG_IRQHandler            0x080006C7                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  _CLOCK_PLL_To_64           0x080002E9         248      4  Code  Gb  CLOCK.o
-  _GPIO_ClockEnable          0x080003E1         100      4  Code  Gb  GPIO.o
-  _GPIO_PinClear             0x08000667          22      2  Code  Gb  GPIO.o
-  _GPIO_PinDClear            0x0800072D          20      2  Code  Gb  GPIO.o
-  _GPIO_PinDSet              0x08000705          20      2  Code  Gb  GPIO.o
-  _GPIO_PinSet               0x08000719          20      2  Code  Gb  GPIO.o
-  _GPIO_SetPinMode           0x0800067D          66      2  Code  Gb  GPIO.o
-  _TIMER_ClockOn             0x08000445         144      4  Code  Gb  TIMER.o
-  _TIMER_DelayComplete       0x0800058D          84      4  Code  Gb  TIMER.o
-  _TIMER_DelayStart          0x080004D5         184      4  Code  Gb  TIMER.o
-  __SEGGER_init_copy         0x080007B3          20      2  Code  Wk  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
-  __SEGGER_init_ctors        0x0800074D          26      4  Code  Wk  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
-  __SEGGER_init_done         0x080005EB                  4  Code  Gb  SEGGER_THUMB_Startup.o
-  __SEGGER_init_zero         0x080007A1          18      2  Code  Wk  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
-  __aeabi_idiv0              0x0800065D           6      4  Code  Wk  intasmops_arm.o (libc_v6m_t_le_eabi_balanced.a)
-  __aeabi_uidiv              0x08000625          56      4  Code  Wk  intasmops_arm.o (libc_v6m_t_le_eabi_balanced.a)
-  __startup_complete         0x080005EB                  4  Code  Gb  SEGGER_THUMB_Startup.o
-  _start                     0x080005E1          14      4  Code  Gb  SEGGER_THUMB_Startup.o
-  exit                       0x080005EF           2      4  Code  Gb  SEGGER_THUMB_Startup.o
-  main                       0x08000271         120      4  Code  Gb  main.o
-  reset_handler              0x08000741                  2  Code  Gb  STM32G0xx_Startup.o
+                             0x08000FF1                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  USB_UCPD1_2_IRQHandler     0x08000FC7                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  VL53L1X_CheckForDataReady  0x08000EB3         106      2  Code  Gb  VL53L1X_api.o
+  VL53L1X_ClearInterrupt     0x080010C5          44      2  Code  Gb  VL53L1X_api.o
+  VL53L1X_GetDistance        0x08001129          52      2  Code  Gb  VL53L1X_api.o
+  VL53L1X_GetInterruptPolarity
+                             0x08000F47          70      2  Code  Gb  VL53L1X_api.o
+  VL53L1X_GetSensorId        0x080010F1          56      2  Code  Gb  VL53L1X_api.o
+  VL53L1X_SensorInit         0x08000B11         268      4  Code  Gb  VL53L1X_api.o
+  VL53L1X_StartRanging       0x08001099          44      2  Code  Gb  VL53L1X_api.o
+  VL53L1X_StopRanging        0x08000F1D          42      2  Code  Gb  VL53L1X_api.o
+  VL53L1_RdByte              0x08000F8D          34      2  Code  Gb  vl53l1_platform.o
+  VL53L1_RdWord              0x08001221          88      2  Code  Gb  vl53l1_platform.o
+  VL53L1_ReadMulti           0x08000C1D         168      4  Code  Gb  vl53l1_platform.o
+  VL53L1_WaitMs              0x08000CC5         120      4  Code  Gb  vl53l1_platform.o
+  VL53L1_WrByte              0x080011FD          36      2  Code  Gb  vl53l1_platform.o
+  VL53L1_WriteMulti          0x0800115D         144      2  Code  Gb  vl53l1_platform.o
+  WWDG_IRQHandler            0x08000FB7                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  _CLOCK_PLL_To_64           0x08000351         248      4  Code  Gb  CLOCK.o
+  _GPIO_ClockEnable          0x08000449         100      4  Code  Gb  GPIO.o
+  _GPIO_PinClear             0x08000DC3          22      2  Code  Gb  GPIO.o
+  _GPIO_PinSet               0x08000FF5          20      2  Code  Gb  GPIO.o
+  _GPIO_SetPinAlternateFunction
+                             0x08001009         144      2  Code  Gb  GPIO.o
+  _GPIO_SetPinMode           0x08000DD9          66      2  Code  Gb  GPIO.o
+  _GPIO_Set_OutputType       0x08000E1B          78      2  Code  Gb  GPIO.o
+  _GPIO_Set_PullType         0x08000E69          74      2  Code  Gb  GPIO.o
+  _I2C1_Init_PB89            0x08000651         392      4  Code  Gb  i2c.o
+  _I2C1_StartRead            0x080007D9         248      4  Code  Gb  i2c.o
+  _I2C1_StartWrite           0x0800097D         260      4  Code  Gb  i2c.o
+  _TIMER_ClockOn             0x080004AD         144      4  Code  Gb  TIMER.o
+  _TIMER_DelayComplete       0x080005FD          84      4  Code  Gb  TIMER.o
+  _TIMER_DelayStart          0x0800053D         192      4  Code  Gb  TIMER.o
+  __SEGGER_init_copy         0x0800135F          20      2  Code  Wk  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
+  __SEGGER_init_ctors        0x080012E1          26      4  Code  Wk  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
+  __SEGGER_init_done         0x08000D47                  4  Code  Gb  SEGGER_THUMB_Startup.o
+  __SEGGER_init_zero         0x0800134D          18      2  Code  Wk  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
+  __aeabi_idiv0              0x08000DB9           6      4  Code  Wk  intasmops_arm.o (libc_v6m_t_le_eabi_balanced.a)
+  __aeabi_uidiv              0x08000D81          56      4  Code  Wk  intasmops_arm.o (libc_v6m_t_le_eabi_balanced.a)
+  __startup_complete         0x08000D47                  4  Code  Gb  SEGGER_THUMB_Startup.o
+  _start                     0x08000D3D          14      4  Code  Gb  SEGGER_THUMB_Startup.o
+  exit                       0x08000D4B           2      4  Code  Gb  SEGGER_THUMB_Startup.o
+  main                       0x08000271         224      4  Code  Gb  main.o
+  reset_handler              0x08001279                  2  Code  Gb  STM32G0xx_Startup.o
 
 Function symbols by address:
 
      Address  Symbol name                      Size  Align  Type  Bd  Object File
   ----------  -------------------------  ----------  -----  ----  --  -----------
   0x080000BD  SystemCoreClockUpdate             372      4  Code  Gb  system_stm32g0xx.o
-  0x08000271  main                              120      4  Code  Gb  main.o
-  0x080002E9  _CLOCK_PLL_To_64                  248      4  Code  Gb  CLOCK.o
-  0x080003E1  _GPIO_ClockEnable                 100      4  Code  Gb  GPIO.o
-  0x08000445  _TIMER_ClockOn                    144      4  Code  Gb  TIMER.o
-  0x080004D5  _TIMER_DelayStart                 184      4  Code  Gb  TIMER.o
-  0x0800058D  _TIMER_DelayComplete               84      4  Code  Gb  TIMER.o
-  0x080005E1  _start                             14      4  Code  Gb  SEGGER_THUMB_Startup.o
-  0x080005EB  __startup_complete                         4  Code  Gb  SEGGER_THUMB_Startup.o
-  0x080005EB  __SEGGER_init_done                         4  Code  Gb  SEGGER_THUMB_Startup.o
-  0x080005EF  exit                                2      4  Code  Gb  SEGGER_THUMB_Startup.o
-  0x080005F5  HardFault_Handler                          4  Code  Wk  STM32G0xx_Startup.o
-  0x08000625  __aeabi_uidiv                      56      4  Code  Wk  intasmops_arm.o (libc_v6m_t_le_eabi_balanced.a)
-  0x0800065D  __aeabi_idiv0                       6      4  Code  Wk  intasmops_arm.o (libc_v6m_t_le_eabi_balanced.a)
-  0x08000665  SystemInit                          2      2  Code  Gb  system_stm32g0xx.o
-  0x08000667  _GPIO_PinClear                     22      2  Code  Gb  GPIO.o
-  0x0800067D  _GPIO_SetPinMode                   66      2  Code  Gb  GPIO.o
-  0x080006BF  NMI_Handler                                2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006C1  SVC_Handler                                2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006C3  PendSV_Handler                             2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006C5  SysTick_Handler                            2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006C7  WWDG_IRQHandler                            2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006C9  PVD_VDDIO2_IRQHandler                      2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006CB  RTC_TAMP_IRQHandler                        2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006CD  FLASH_IRQHandler                           2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006CF  RCC_CRS_IRQHandler                         2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006D1  EXTI0_1_IRQHandler                         2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006D3  EXTI2_3_IRQHandler                         2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006D5  EXTI4_15_IRQHandler                        2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006D7  USB_UCPD1_2_IRQHandler                     2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006D9  DMA1_Channel1_IRQHandler                   2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006DB  DMA1_Channel2_3_IRQHandler
+  0x08000271  main                              224      4  Code  Gb  main.o
+  0x08000351  _CLOCK_PLL_To_64                  248      4  Code  Gb  CLOCK.o
+  0x08000449  _GPIO_ClockEnable                 100      4  Code  Gb  GPIO.o
+  0x080004AD  _TIMER_ClockOn                    144      4  Code  Gb  TIMER.o
+  0x0800053D  _TIMER_DelayStart                 192      4  Code  Gb  TIMER.o
+  0x080005FD  _TIMER_DelayComplete               84      4  Code  Gb  TIMER.o
+  0x08000651  _I2C1_Init_PB89                   392      4  Code  Gb  i2c.o
+  0x080007D9  _I2C1_StartRead                   248      4  Code  Gb  i2c.o
+  0x080008D1  I2C1_WaitFlag                     156      4  Code  Lc  i2c.o
+  0x0800096D  I2C1_ClearFlags                    16      4  Code  Lc  i2c.o
+  0x0800097D  _I2C1_StartWrite                  260      4  Code  Gb  i2c.o
+  0x08000A81  I2C1_WaitIdle                      56      4  Code  Lc  i2c.o
+  0x08000AB9  I2C1_Abort                         88      4  Code  Lc  i2c.o
+  0x08000B11  VL53L1X_SensorInit                268      4  Code  Gb  VL53L1X_api.o
+  0x08000C1D  VL53L1_ReadMulti                  168      4  Code  Gb  vl53l1_platform.o
+  0x08000CC5  VL53L1_WaitMs                     120      4  Code  Gb  vl53l1_platform.o
+  0x08000D3D  _start                             14      4  Code  Gb  SEGGER_THUMB_Startup.o
+  0x08000D47  __startup_complete                         4  Code  Gb  SEGGER_THUMB_Startup.o
+  0x08000D47  __SEGGER_init_done                         4  Code  Gb  SEGGER_THUMB_Startup.o
+  0x08000D4B  exit                                2      4  Code  Gb  SEGGER_THUMB_Startup.o
+  0x08000D51  HardFault_Handler                          4  Code  Wk  STM32G0xx_Startup.o
+  0x08000D81  __aeabi_uidiv                      56      4  Code  Wk  intasmops_arm.o (libc_v6m_t_le_eabi_balanced.a)
+  0x08000DB9  __aeabi_idiv0                       6      4  Code  Wk  intasmops_arm.o (libc_v6m_t_le_eabi_balanced.a)
+  0x08000DC1  SystemInit                          2      2  Code  Gb  system_stm32g0xx.o
+  0x08000DC3  _GPIO_PinClear                     22      2  Code  Gb  GPIO.o
+  0x08000DD9  _GPIO_SetPinMode                   66      2  Code  Gb  GPIO.o
+  0x08000E1B  _GPIO_Set_OutputType               78      2  Code  Gb  GPIO.o
+  0x08000E69  _GPIO_Set_PullType                 74      2  Code  Gb  GPIO.o
+  0x08000EB3  VL53L1X_CheckForDataReady         106      2  Code  Gb  VL53L1X_api.o
+  0x08000F1D  VL53L1X_StopRanging                42      2  Code  Gb  VL53L1X_api.o
+  0x08000F47  VL53L1X_GetInterruptPolarity
+                                                 70      2  Code  Gb  VL53L1X_api.o
+  0x08000F8D  VL53L1_RdByte                      34      2  Code  Gb  vl53l1_platform.o
+  0x08000FAF  NMI_Handler                                2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FB1  SVC_Handler                                2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FB3  PendSV_Handler                             2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FB5  SysTick_Handler                            2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FB7  WWDG_IRQHandler                            2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FB9  PVD_VDDIO2_IRQHandler                      2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FBB  RTC_TAMP_IRQHandler                        2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FBD  FLASH_IRQHandler                           2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FBF  RCC_CRS_IRQHandler                         2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FC1  EXTI0_1_IRQHandler                         2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FC3  EXTI2_3_IRQHandler                         2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FC5  EXTI4_15_IRQHandler                        2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FC7  USB_UCPD1_2_IRQHandler                     2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FC9  DMA1_Channel1_IRQHandler                   2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FCB  DMA1_Channel2_3_IRQHandler
                                                          2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006DD  DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQHandler
+  0x08000FCD  DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQHandler
                                                          2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006DF  ADC1_COMP_IRQHandler                       2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006E1  TIM1_BRK_UP_TRG_COM_IRQHandler
+  0x08000FCF  ADC1_COMP_IRQHandler                       2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FD1  TIM1_BRK_UP_TRG_COM_IRQHandler
                                                          2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006E3  TIM1_CC_IRQHandler                         2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006E5  TIM2_IRQHandler                            2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006E7  TIM3_TIM4_IRQHandler                       2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006E9  TIM6_DAC_LPTIM1_IRQHandler
+  0x08000FD3  TIM1_CC_IRQHandler                         2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FD5  TIM2_IRQHandler                            2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FD7  TIM3_TIM4_IRQHandler                       2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FD9  TIM6_DAC_LPTIM1_IRQHandler
                                                          2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006EB  TIM7_LPTIM2_IRQHandler                     2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006ED  TIM14_IRQHandler                           2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006EF  TIM15_IRQHandler                           2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006F1  TIM16_FDCAN_IT0_IRQHandler
+  0x08000FDB  TIM7_LPTIM2_IRQHandler                     2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FDD  TIM14_IRQHandler                           2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FDF  TIM15_IRQHandler                           2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FE1  TIM16_FDCAN_IT0_IRQHandler
                                                          2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006F3  TIM17_FDCAN_IT1_IRQHandler
+  0x08000FE3  TIM17_FDCAN_IT1_IRQHandler
                                                          2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006F5  I2C1_IRQHandler                            2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006F7  I2C2_3_IRQHandler                          2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006F9  SPI1_IRQHandler                            2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006FB  SPI2_3_IRQHandler                          2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006FD  USART1_IRQHandler                          2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x080006FF  USART2_LPUART2_IRQHandler                  2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x08000701  USART3_4_5_6_LPUART1_IRQHandler
+  0x08000FE5  I2C1_IRQHandler                            2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FE7  I2C2_3_IRQHandler                          2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FE9  SPI1_IRQHandler                            2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FEB  SPI2_3_IRQHandler                          2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FED  USART1_IRQHandler                          2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FEF  USART2_LPUART2_IRQHandler                  2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FF1  USART3_4_5_6_LPUART1_IRQHandler
                                                          2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x08000703  CEC_IRQHandler                             2  Code  Wk  stm32g0b1xx_Vectors.o
-  0x08000705  _GPIO_PinDSet                      20      2  Code  Gb  GPIO.o
-  0x08000719  _GPIO_PinSet                       20      2  Code  Gb  GPIO.o
-  0x0800072D  _GPIO_PinDClear                    20      2  Code  Gb  GPIO.o
-  0x08000741  reset_handler                              2  Code  Gb  STM32G0xx_Startup.o
-  0x08000741  Reset_Handler                              2  Code  Gb  STM32G0xx_Startup.o
-  0x0800074D  __SEGGER_init_ctors                26      4  Code  Wk  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
-  0x080007A1  __SEGGER_init_zero                 18      2  Code  Wk  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
-  0x080007B3  __SEGGER_init_copy                 20      2  Code  Wk  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
+  0x08000FF3  CEC_IRQHandler                             2  Code  Wk  stm32g0b1xx_Vectors.o
+  0x08000FF5  _GPIO_PinSet                       20      2  Code  Gb  GPIO.o
+  0x08001009  _GPIO_SetPinAlternateFunction
+                                                144      2  Code  Gb  GPIO.o
+  0x08001099  VL53L1X_StartRanging               44      2  Code  Gb  VL53L1X_api.o
+  0x080010C5  VL53L1X_ClearInterrupt             44      2  Code  Gb  VL53L1X_api.o
+  0x080010F1  VL53L1X_GetSensorId                56      2  Code  Gb  VL53L1X_api.o
+  0x08001129  VL53L1X_GetDistance                52      2  Code  Gb  VL53L1X_api.o
+  0x0800115D  VL53L1_WriteMulti                 144      2  Code  Gb  vl53l1_platform.o
+  0x080011ED  SensorAddress                      16      2  Code  Lc  vl53l1_platform.o
+  0x080011FD  VL53L1_WrByte                      36      2  Code  Gb  vl53l1_platform.o
+  0x08001221  VL53L1_RdWord                      88      2  Code  Gb  vl53l1_platform.o
+  0x08001279  reset_handler                              2  Code  Gb  STM32G0xx_Startup.o
+  0x08001279  Reset_Handler                              2  Code  Gb  STM32G0xx_Startup.o
+  0x080012E1  __SEGGER_init_ctors                26      4  Code  Wk  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
+  0x0800134D  __SEGGER_init_zero                 18      2  Code  Wk  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
+  0x0800135F  __SEGGER_init_copy                 20      2  Code  Wk  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
 
 Function symbols by descending size:
 
   Symbol name                      Size  Align  Type  Bd  Object File
   -------------------------  ----------  -----  ----  --  -----------
+  _I2C1_Init_PB89                   392      4  Code  Gb  i2c.o
   SystemCoreClockUpdate             372      4  Code  Gb  system_stm32g0xx.o
+  VL53L1X_SensorInit                268      4  Code  Gb  VL53L1X_api.o
+  _I2C1_StartWrite                  260      4  Code  Gb  i2c.o
   _CLOCK_PLL_To_64                  248      4  Code  Gb  CLOCK.o
-  _TIMER_DelayStart                 184      4  Code  Gb  TIMER.o
+  _I2C1_StartRead                   248      4  Code  Gb  i2c.o
+  main                              224      4  Code  Gb  main.o
+  _TIMER_DelayStart                 192      4  Code  Gb  TIMER.o
+  VL53L1_ReadMulti                  168      4  Code  Gb  vl53l1_platform.o
+  I2C1_WaitFlag                     156      4  Code  Lc  i2c.o
+  VL53L1_WriteMulti                 144      2  Code  Gb  vl53l1_platform.o
+  _GPIO_SetPinAlternateFunction
+                                    144      2  Code  Gb  GPIO.o
   _TIMER_ClockOn                    144      4  Code  Gb  TIMER.o
-  main                              120      4  Code  Gb  main.o
+  VL53L1_WaitMs                     120      4  Code  Gb  vl53l1_platform.o
+  VL53L1X_CheckForDataReady         106      2  Code  Gb  VL53L1X_api.o
   _GPIO_ClockEnable                 100      4  Code  Gb  GPIO.o
+  I2C1_Abort                         88      4  Code  Lc  i2c.o
+  VL53L1_RdWord                      88      2  Code  Gb  vl53l1_platform.o
   _TIMER_DelayComplete               84      4  Code  Gb  TIMER.o
+  _GPIO_Set_OutputType               78      2  Code  Gb  GPIO.o
+  _GPIO_Set_PullType                 74      2  Code  Gb  GPIO.o
+  VL53L1X_GetInterruptPolarity
+                                     70      2  Code  Gb  VL53L1X_api.o
   _GPIO_SetPinMode                   66      2  Code  Gb  GPIO.o
+  I2C1_WaitIdle                      56      4  Code  Lc  i2c.o
+  VL53L1X_GetSensorId                56      2  Code  Gb  VL53L1X_api.o
   __aeabi_uidiv                      56      4  Code  Wk  intasmops_arm.o (libc_v6m_t_le_eabi_balanced.a)
+  VL53L1X_GetDistance                52      2  Code  Gb  VL53L1X_api.o
+  VL53L1X_ClearInterrupt             44      2  Code  Gb  VL53L1X_api.o
+  VL53L1X_StartRanging               44      2  Code  Gb  VL53L1X_api.o
+  VL53L1X_StopRanging                42      2  Code  Gb  VL53L1X_api.o
+  VL53L1_WrByte                      36      2  Code  Gb  vl53l1_platform.o
+  VL53L1_RdByte                      34      2  Code  Gb  vl53l1_platform.o
   __SEGGER_init_ctors                26      4  Code  Wk  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
   _GPIO_PinClear                     22      2  Code  Gb  GPIO.o
-  _GPIO_PinDClear                    20      2  Code  Gb  GPIO.o
-  _GPIO_PinDSet                      20      2  Code  Gb  GPIO.o
   _GPIO_PinSet                       20      2  Code  Gb  GPIO.o
   __SEGGER_init_copy                 20      2  Code  Wk  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
   __SEGGER_init_zero                 18      2  Code  Wk  SEGGER_crtinit.o (SEGGER_crtinit_v6m_t_le_eabi_balanced.a)
+  I2C1_ClearFlags                    16      4  Code  Lc  i2c.o
+  SensorAddress                      16      2  Code  Lc  vl53l1_platform.o
   _start                             14      4  Code  Gb  SEGGER_THUMB_Startup.o
   __aeabi_idiv0                       6      4  Code  Wk  intasmops_arm.o (libc_v6m_t_le_eabi_balanced.a)
   SystemInit                          2      2  Code  Gb  system_stm32g0xx.o
@@ -389,8 +508,20 @@ Read-write data symbols by name:
 
   Symbol name                   Address        Size  Align  Type  Bd  Object File
   -------------------------  ----------  ----------  -----  ----  --  -----------
-  SystemCoreClock            0x20000014           4      4  Init  Gb  system_stm32g0xx.o
-  UserLED                    0x2000000C           8      4  Init  Gb  main.o
+  SystemCoreClock            0x2000003C           4      4  Init  Gb  system_stm32g0xx.o
+  clearStatus                0x20000038           4      4  Init  Gb  main.o
+  dataReady                  0x20000018           1         Zero  Gb  main.o
+  debugI2CErrorISR           0x20000010           4      4  Zero  Gb  i2c.o
+  debugReadResult            0x20000034           4      4  Init  Gb  vl53l1_platform.o
+  debugWriteResult           0x20000030           4      4  Init  Gb  vl53l1_platform.o
+  distanceStatus             0x2000002C           4      4  Init  Gb  main.o
+  distance_mm                0x20000016           2      2  Zero  Gb  main.o
+  measurementCount           0x2000000C           4      4  Zero  Gb  main.o
+  readyStatus                0x20000028           4      4  Init  Gb  main.o
+  sensorId                   0x20000014           2      2  Zero  Gb  main.o
+  sensorIdStatus             0x20000024           4      4  Init  Gb  main.o
+  sensorInitStatus           0x20000020           4      4  Init  Gb  main.o
+  startStatus                0x2000001C           4      4  Init  Gb  main.o
   testCNT                    0x20000008           4      4  Zero  Gb  TIMER.o
   testCR1                    0x20000004           4      4  Zero  Gb  TIMER.o
   testSR                     0x20000000           4      4  Zero  Gb  TIMER.o
@@ -402,34 +533,62 @@ Read-write data symbols by address:
   0x20000000  testSR                              4      4  Zero  Gb  TIMER.o
   0x20000004  testCR1                             4      4  Zero  Gb  TIMER.o
   0x20000008  testCNT                             4      4  Zero  Gb  TIMER.o
-  0x2000000C  UserLED                             8      4  Init  Gb  main.o
-  0x20000014  SystemCoreClock                     4      4  Init  Gb  system_stm32g0xx.o
+  0x2000000C  measurementCount                    4      4  Zero  Gb  main.o
+  0x20000010  debugI2CErrorISR                    4      4  Zero  Gb  i2c.o
+  0x20000014  sensorId                            2      2  Zero  Gb  main.o
+  0x20000016  distance_mm                         2      2  Zero  Gb  main.o
+  0x20000018  dataReady                           1         Zero  Gb  main.o
+  0x2000001C  startStatus                         4      4  Init  Gb  main.o
+  0x20000020  sensorInitStatus                    4      4  Init  Gb  main.o
+  0x20000024  sensorIdStatus                      4      4  Init  Gb  main.o
+  0x20000028  readyStatus                         4      4  Init  Gb  main.o
+  0x2000002C  distanceStatus                      4      4  Init  Gb  main.o
+  0x20000030  debugWriteResult                    4      4  Init  Gb  vl53l1_platform.o
+  0x20000034  debugReadResult                     4      4  Init  Gb  vl53l1_platform.o
+  0x20000038  clearStatus                         4      4  Init  Gb  main.o
+  0x2000003C  SystemCoreClock                     4      4  Init  Gb  system_stm32g0xx.o
 
 Read-write data symbols by descending size:
 
   Symbol name                      Size  Align  Type  Bd  Object File
   -------------------------  ----------  -----  ----  --  -----------
-  UserLED                             8      4  Init  Gb  main.o
   SystemCoreClock                     4      4  Init  Gb  system_stm32g0xx.o
+  clearStatus                         4      4  Init  Gb  main.o
+  debugI2CErrorISR                    4      4  Zero  Gb  i2c.o
+  debugReadResult                     4      4  Init  Gb  vl53l1_platform.o
+  debugWriteResult                    4      4  Init  Gb  vl53l1_platform.o
+  distanceStatus                      4      4  Init  Gb  main.o
+  measurementCount                    4      4  Zero  Gb  main.o
+  readyStatus                         4      4  Init  Gb  main.o
+  sensorIdStatus                      4      4  Init  Gb  main.o
+  sensorInitStatus                    4      4  Init  Gb  main.o
+  startStatus                         4      4  Init  Gb  main.o
   testCNT                             4      4  Zero  Gb  TIMER.o
   testCR1                             4      4  Zero  Gb  TIMER.o
   testSR                              4      4  Zero  Gb  TIMER.o
+  distance_mm                         2      2  Zero  Gb  main.o
+  sensorId                            2      2  Zero  Gb  main.o
+  dataReady                           1         Zero  Gb  main.o
 
 Read-only data symbols by name:
 
   Symbol name                   Address        Size  Align  Type  Bd  Object File
   -------------------------  ----------  ----------  -----  ----  --  -----------
   AHBPrescTable              0x08000230          64      4  Cnst  Gb  system_stm32g0xx.o
-  __SEGGER_init_data__       0x08000794        [12]      4  Cnst  Lc  [ Linker created ]
-  __SEGGER_init_table__      0x08000770        [36]      4  Cnst  Lc  [ Linker created ]
+  VL51L1X_DEFAULT_CONFIGURATION
+                             0x08001280          91         Cnst  Gb  VL53L1X_api.o
+  __SEGGER_init_data__       0x08001328        [36]      4  Cnst  Lc  [ Linker created ]
+  __SEGGER_init_table__      0x08001304        [36]      4  Cnst  Lc  [ Linker created ]
 
 Read-only data symbols by address:
 
      Address  Symbol name                      Size  Align  Type  Bd  Object File
   ----------  -------------------------  ----------  -----  ----  --  -----------
   0x08000230  AHBPrescTable                      64      4  Cnst  Gb  system_stm32g0xx.o
-  0x08000770  __SEGGER_init_table__            [36]      4  Cnst  Lc  [ Linker created ]
-  0x08000794  __SEGGER_init_data__             [12]      4  Cnst  Lc  [ Linker created ]
+  0x08001280  VL51L1X_DEFAULT_CONFIGURATION
+                                                 91         Cnst  Gb  VL53L1X_api.o
+  0x08001304  __SEGGER_init_table__            [36]      4  Cnst  Lc  [ Linker created ]
+  0x08001328  __SEGGER_init_data__             [36]      4  Cnst  Lc  [ Linker created ]
 
 Untyped symbols by name:
 
@@ -439,18 +598,18 @@ Untyped symbols by name:
   __FLASH1_segment_size__    0x00080000                     ----  Gb  [ Linker created ]
   __FLASH1_segment_start__   0x08000000                     ----  Gb  [ Linker created ]
   __FLASH1_segment_used_end__
-                             0x080007C6                     ----  Gb  [ Linker created ]
+                             0x08001372                     ----  Gb  [ Linker created ]
   __FLASH1_segment_used_size__
-                             0x000007C6                     ----  Gb  [ Linker created ]
+                             0x00001372                     ----  Gb  [ Linker created ]
   __FLASH1_segment_used_start__
                              0x08000000                     ----  Gb  [ Linker created ]
   __FLASH_segment_end__      0x08080000                     ----  Gb  [ Linker created ]
   __FLASH_segment_size__     0x00080000                     ----  Gb  [ Linker created ]
   __FLASH_segment_start__    0x08000000                     ----  Gb  [ Linker created ]
   __FLASH_segment_used_end__
-                             0x080007C6                     ----  Gb  [ Linker created ]
+                             0x08001372                     ----  Gb  [ Linker created ]
   __FLASH_segment_used_size__
-                             0x000007C6                     ----  Gb  [ Linker created ]
+                             0x00001372                     ----  Gb  [ Linker created ]
   __FLASH_segment_used_start__
                              0x08000000                     ----  Gb  [ Linker created ]
   __HEAPSIZE__               0x00000400                     ----  Gb  [ Linker created ]
@@ -471,8 +630,8 @@ Untyped symbols by name:
                              0x20000000                     ----  Gb  [ Linker created ]
   __STACKSIZE_PROCESS__      0x00000000                     ----  Gb  [ Linker created ]
   __STACKSIZE__              0x00000800                     ----  Gb  [ Linker created ]
-  __ctors_end__              0x0800074C                     ----  Gb  [ Linker created ]
-  __ctors_start__            0x08000748                     ----  Gb  [ Linker created ]
+  __ctors_end__              0x080012E0                     ----  Gb  [ Linker created ]
+  __ctors_start__            0x080012DC                     ----  Gb  [ Linker created ]
   __stack_end__              0x20024000                     ----  Gb  [ Linker created ]
   __thread_pointer$          0x00000000                     ----  Gb  [ Linker created ]
   _vectors                   0x08000000       [188]    256  Code  Gb  stm32g0b1xx_Vectors.o
@@ -485,11 +644,11 @@ Untyped symbols by address:
   0x00000000  __thread_pointer$                             ----  Gb  [ Linker created ]
   0x00000000  __STACKSIZE_PROCESS__                         ----  Gb  [ Linker created ]
   0x00000400  __HEAPSIZE__                                  ----  Gb  [ Linker created ]
-  0x000007C6  __FLASH_segment_used_size__
-                                                            ----  Gb  [ Linker created ]
-  0x000007C6  __FLASH1_segment_used_size__
-                                                            ----  Gb  [ Linker created ]
   0x00000800  __STACKSIZE__                                 ----  Gb  [ Linker created ]
+  0x00001372  __FLASH_segment_used_size__
+                                                            ----  Gb  [ Linker created ]
+  0x00001372  __FLASH1_segment_used_size__
+                                                            ----  Gb  [ Linker created ]
   0x00024000  __RAM_segment_used_size__                     ----  Gb  [ Linker created ]
   0x00024000  __RAM_segment_size__                          ----  Gb  [ Linker created ]
   0x00024000  __RAM1_segment_used_size__
@@ -505,11 +664,11 @@ Untyped symbols by address:
                                                             ----  Gb  [ Linker created ]
   0x08000000  __FLASH1_segment_start__                      ----  Gb  [ Linker created ]
   0x080000BC  _vectors_end                             256  Code  Lc  stm32g0b1xx_Vectors.o
-  0x08000748  __ctors_start__                               ----  Gb  [ Linker created ]
-  0x0800074C  __ctors_end__                                 ----  Gb  [ Linker created ]
-  0x080007C6  __FLASH_segment_used_end__
+  0x080012DC  __ctors_start__                               ----  Gb  [ Linker created ]
+  0x080012E0  __ctors_end__                                 ----  Gb  [ Linker created ]
+  0x08001372  __FLASH_segment_used_end__
                                                             ----  Gb  [ Linker created ]
-  0x080007C6  __FLASH1_segment_used_end__
+  0x08001372  __FLASH1_segment_used_end__
                                                             ----  Gb  [ Linker created ]
   0x08080000  __FLASH_segment_end__                         ----  Gb  [ Linker created ]
   0x08080000  __FLASH1_segment_end__                        ----  Gb  [ Linker created ]
@@ -534,15 +693,15 @@ Untyped symbols by address:
 
 Memory breakdown:
 
-    1 874 bytes read-only  code    + 
-      112 bytes read-only  data    =   1 986 bytes read-only (total)
-    2 072 bytes read-write data
+    4 746 bytes read-only  code    + 
+      227 bytes read-only  data    =   4 973 bytes read-only (total)
+    2 109 bytes read-write data
 
 Region summary:
 
   Name        Range                     Size                 Used               Unused       Alignment Loss
   ----------  -----------------  -----------  -------------------  -------------------  -------------------
-  FLASH       08000000-0807ffff      524 288        1 990   0.38%      522 298  99.62%            0   0.00%
-  RAM         20000000-20023fff      147 456        2 072   1.41%      145 384  98.59%            0   0.00%
+  FLASH       08000000-0807ffff      524 288        4 977   0.95%      519 311  99.05%            0   0.00%
+  RAM         20000000-20023fff      147 456        2 109   1.43%      145 347  98.57%            0   0.00%
 
 Link complete: 0 errors, 0 warnings, 0 remarks

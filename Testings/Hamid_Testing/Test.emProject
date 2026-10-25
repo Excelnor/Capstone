@@ -62,9 +62,15 @@
       <file file_name="../../MyLibs/CLOCK.h" />
       <file file_name="../../MyLibs/GPIO.c" />
       <file file_name="../../MyLibs/GPIO.h" />
+      <file file_name="../../MyLibs/i2c.c" />
+      <file file_name="../../MyLibs/i2c.h" />
       <file file_name="main.c" />
       <file file_name="../../MyLibs/TIMER.c" />
       <file file_name="../../MyLibs/TIMER.h" />
+      <file file_name="../../MyLibs/vl53l1_platform.c" />
+      <file file_name="../../MyLibs/vl53l1_platform.h" />
+      <file file_name="../../MyLibs/VL53L1X_api.c" />
+      <file file_name="../../MyLibs/VL53L1X_api.h" />
     </folder>
     <folder Name="System Files">
       <file file_name="SEGGER_THUMB_Startup.s" />

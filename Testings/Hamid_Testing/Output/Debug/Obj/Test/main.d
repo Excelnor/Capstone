@@ -17,4 +17,11 @@ Output/Debug/Obj/Test/main.o: \
   C:\Users\USER\OneDrive\Documents\GITHUB\Capstone\Testings\Hamid_Testing\STM32G0xx\Device\Include\system_stm32g0xx.h \
   C:\Users\USER\OneDrive\Documents\GITHUB\Capstone\MyLibs\TIMER.h \
   C:\Users\USER\OneDrive\Documents\GITHUB\Capstone\MyLibs\CLOCK.h \
-  C:\Users\USER\OneDrive\Desktop\include\inttypes.h
+  C:\Users\USER\OneDrive\Desktop\include\inttypes.h \
+  C:\Users\USER\OneDrive\Documents\GITHUB\Capstone\MyLibs\i2c.h \
+  C:\Users\USER\OneDrive\Documents\GITHUB\Capstone\MyLibs\VL53L1X_api.h \
+  C:\Users\USER\OneDrive\Documents\GITHUB\Capstone\MyLibs\vl53l1_platform.h \
+  C:\Users\USER\OneDrive\Documents\GITHUB\Capstone\MyLibs\vl53l1_types.h \
+  C:\Users\USER\OneDrive\Desktop\include\stddef.h \
+  C:\Users\USER\OneDrive\Desktop\include\string.h \
+  C:\Users\USER\OneDrive\Desktop\include\stdlib.h
